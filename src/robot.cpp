@@ -24,7 +24,11 @@ namespace robot_simulation{
 		, max_speed_(max_speed)
 		, min_(min)
 		, max_(max)
-		, pos_{{0, 0, 0}, {0, 0, 0}} {}
+		, pos_{{0, 0, 0}, {0, 0, 0}}
+	{
+		std::cout << "   " << pos_
+			<< "; max speed: " << std::setw(6) << max_speed_ << " m/s\n";
+	}
 
 
 	std::future< void > robot::move_to(robot_position target_pos){

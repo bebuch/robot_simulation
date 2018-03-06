@@ -28,7 +28,7 @@ namespace robot_simulation{
 
 		std::future< void > move_to(robot_position target_pos);
 
-		robot_position pos()const{ return pos_; }
+		robot_position pos()const noexcept{ return pos_; }
 
 
 	private:

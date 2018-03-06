@@ -88,14 +88,14 @@ namespace robot_simulation{
 						std::chrono::duration< double > >(step).count();
 
 					std::cout << pos_
-						<< "; time: " << std::setw(6) << time
+						<< "; time: " << std::setw(6) << time << " s"
 						<< "; speed: " << std::setw(6) << speed  << " m/s\n";
 				}
 
 				pos_ = target_pos;
 
 				std::cout << pos_
-					<< "; time: " << std::setw(6) << end_time
+					<< "; time: " << std::setw(6) << end_time << " s"
 					<< "; speed: " << std::setw(6) << 0.0 << " m/s\n";
 			};
 	}

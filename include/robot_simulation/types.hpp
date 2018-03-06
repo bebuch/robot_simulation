@@ -70,9 +70,9 @@ namespace robot_simulation{
 
 	inline std::ostream& operator<<(std::ostream& os, position const& p){
 		return os << std::fixed << std::setprecision(3)
-			<< "{" << std::setw(6) << p.x
-			<< ", " << std::setw(6) << p.y
-			<< ", " << std::setw(6) << p.z << "}";
+			<< "{" << std::setw(6) << p.x << " m"
+			<< ", " << std::setw(6) << p.y << " m"
+			<< ", " << std::setw(6) << p.z << " m}";
 	}
 
 	struct orientation{
@@ -117,15 +117,15 @@ namespace robot_simulation{
 
 	inline std::ostream& operator<<(std::ostream& os, orientation const& o){
 		return os << std::fixed << std::setprecision(3)
-			<< "{" << std::setw(6) << o.yaw
-			<< ", " << std::setw(6) << o.pitch
-			<< ", " << std::setw(6) << o.roll << "}";
+			<< "{" << std::setw(6) << o.yaw << " rad"
+			<< ", " << std::setw(6) << o.pitch << " rad"
+			<< ", " << std::setw(6) << o.roll << " rad}";
 	}
 
 
 	struct robot_position{
-		position position;
-		orientation orientation;
+		struct position position;
+		struct orientation orientation;
 	};
 
 	constexpr robot_position operator-(

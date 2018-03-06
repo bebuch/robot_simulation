@@ -22,7 +22,12 @@ namespace robot_simulation{
 		, max_speed_(max_speed)
 		, min_(min)
 		, max_(max)
-		, pos_{min.x, min.y, max.z} {}
+		, pos_{min.x, min.y, max.z}
+	{
+		std::cout << "   " << pos_
+			<< "; max speed: " << std::setw(6) << max_speed_ << " m/s\n";
+	}
+
 
 
 	std::future< void > rope_platform::move_to(position target_pos){
