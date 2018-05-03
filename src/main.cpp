@@ -35,9 +35,12 @@ struct ws_service: webservice::json_ws_service{
 	)override{
 		std::cout << "received text message: " << data << "\n";
 		auto type = data.at("type").get< std::string >();
+		std::cout << "type: '" << type << "'\n";
 		if(type == "get_carrier_minmax"){
 			executor().get_executor().defer(
 				[this, identifier]{
+					std::cout << "exec: get_carrier_minmax\n";
+
 					send_text(identifier, nlohmann::json::object({
 							{"type", "carrier_minmax"},
 							{"min", nlohmann::json::object({
@@ -55,11 +58,17 @@ struct ws_service: webservice::json_ws_service{
 		}else if(type == "carrier_move_to"){
 			executor().get_executor().defer(
 				[this, identifier, data = std::move(data)]{
-					platform.move_to({
-							data.at("x").get< double >(),
-							data.at("y").get< double >(),
-							data.at("z").get< double >()
-						}).get();
+					std::cout << "exec: carrier_move_to\n";
+
+					auto x = data.at("x").get< double >();
+					auto y = data.at("y").get< double >();
+					auto z = data.at("z").get< double >();
+
+					std::cout << "x: " << x << "\n";
+					std::cout << "y: " << y << "\n";
+					std::cout << "z: " << z << "\n";
+
+					platform.move_to({x, y, z}).get();
 
 					auto pos = platform.pos();
 					send_text(identifier, nlohmann::json{
@@ -72,14 +81,23 @@ struct ws_service: webservice::json_ws_service{
 		}else if(type == "robot_move_to"){
 			executor().get_executor().defer(
 				[this, identifier, data = std::move(data)]{
-					robot.move_to({
-							data.at("x").get< double >(),
-							data.at("y").get< double >(),
-							data.at("z").get< double >(),
-							data.at("roll").get< double >(),
-							data.at("pitch").get< double >(),
-							data.at("yaw").get< double >()
-						}).get();
+					std::cout << "exec: robot_move_to\n";
+
+					auto x = data.at("x").get< double >();
+					auto y = data.at("y").get< double >();
+					auto z = data.at("z").get< double >();
+					auto roll = data.at("roll").get< double >();
+					auto pitch = data.at("pitch").get< double >();
+					auto yaw = data.at("yaw").get< double >();
+
+					std::cout << "x: " << x << "\n";
+					std::cout << "y: " << y << "\n";
+					std::cout << "z: " << z << "\n";
+					std::cout << "roll: " << roll << "\n";
+					std::cout << "pitch: " << pitch << "\n";
+					std::cout << "yaw: " << yaw << "\n";
+
+					robot.move_to({{x, y, z}, {roll, pitch, yaw}}).get();
 
 					auto pos = robot.pos();
 					send_text(identifier, nlohmann::json{
@@ -92,20 +110,30 @@ struct ws_service: webservice::json_ws_service{
 							{"yaw", pos.orientation.yaw}
 						});
 				}, std::allocator< void >());
-		}else if(type == "robot_weld_to"){
+		}else if(type == "weld_to"){
 			executor().get_executor().defer(
 				[this, identifier, data = std::move(data)]{
-					auto add = data.at("add").get< double >();
-					(void)add; // TODO: Implement robot weld_to
+					std::cout << "exec: weld_to\n";
 
-					robot.move_to({
-							data.at("x").get< double >(),
-							data.at("y").get< double >(),
-							data.at("z").get< double >(),
-							data.at("roll").get< double >(),
-							data.at("pitch").get< double >(),
-							data.at("yaw").get< double >()
-						}).get();
+
+					auto x = data.at("x").get< double >();
+					auto y = data.at("y").get< double >();
+					auto z = data.at("z").get< double >();
+					auto roll = data.at("roll").get< double >();
+					auto pitch = data.at("pitch").get< double >();
+					auto yaw = data.at("yaw").get< double >();
+					auto add = data.at("add").get< double >();
+
+					std::cout << "x: " << x << "\n";
+					std::cout << "y: " << y << "\n";
+					std::cout << "z: " << z << "\n";
+					std::cout << "roll: " << roll << "\n";
+					std::cout << "pitch: " << pitch << "\n";
+					std::cout << "yaw: " << yaw << "\n";
+					std::cout << "add: " << add << "\n";
+
+					(void)add; // TODO: Implement robot weld_to
+					robot.move_to({{x, y, z}, {roll, pitch, yaw}}).get();
 
 					send_text(identifier, nlohmann::json{
 							{"type", "weld_ready"}
@@ -123,6 +151,8 @@ struct ws_service: webservice::json_ws_service{
 		std::cout << "received binary message\n";
 		executor().get_executor().defer(
 			[this, identifier]{
+				std::cout << "exec: 3d_data\n";
+
 				send_text(identifier, nlohmann::json{
 						{"type", "3d_ready"}
 					});
@@ -154,7 +184,7 @@ int main(){
 	try{
 		std::string const host = "127.0.0.1";
 		std::string const port = "8080";
-		std::uint8_t const thread_count = 5;
+		std::uint8_t const thread_count = 10;
 		std::string const resource = "/TCC";
 
 		webservice::client client(
