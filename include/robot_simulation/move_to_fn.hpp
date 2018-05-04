@@ -117,8 +117,8 @@ namespace robot_simulation{
 						}
 
 						std::cout
-							<< "; current: " << std::setw(6) << current << " A"
-							<< "; voltage: " << std::setw(6) << voltage << " V";
+							<< "; current: " << std::setw(9) << current << " A"
+							<< "; voltage: " << std::setw(9) << voltage << " V";
 
 						robot.weld_params_.push_back({
 								{pos},
