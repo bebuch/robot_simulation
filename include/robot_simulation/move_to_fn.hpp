@@ -33,14 +33,14 @@ namespace robot_simulation{
 				target_to = std::forward< Pos >(target_to),
 				lock = std::move(lock)
 			]{
-				auto& pos_ = robot.pos_;
+				auto& pos = robot.pos_;
 				auto const acceleration_ = robot.acceleration_;
 				auto const max_speed_ = robot.max_speed_;
 
-				auto const source_pos = pos_;
-				auto const target_pos = [&target_to]{
+				auto const source_pos = pos;
+				auto const target_pos = [&pos, &target_to]{
 					if constexpr(std::is_same_v< Pos, robot_weld_target >){
-						return static_cast< robot_position >(target_to);
+						return to_robot_target(pos, target_to);
 					}else{
 						return target_to;
 					}
@@ -48,7 +48,7 @@ namespace robot_simulation{
 				auto const direction = target_pos - source_pos;
 
 				auto const distance =
-					robot_simulation::distance(pos_, target_pos);
+					robot_simulation::distance(pos, target_pos);
 
 				auto time = 0.0;
 
@@ -70,7 +70,7 @@ namespace robot_simulation{
 				std::uniform_real_distribution<> current_dis_off(-0.05, 0.05);
 				std::uniform_real_distribution<> voltage_dis_off(-0.01, 0.01);
 				auto const weld_distance =
-					robot_simulation::distance(pos_, target_to);
+					robot_simulation::distance(pos, target_to);
 
 
 				auto const calc =
@@ -102,7 +102,7 @@ namespace robot_simulation{
 					auto const [distance_done, speed] = calc(time);
 
 					auto const fraction = distance_done / distance;
-					pos_ = source_pos + direction * fraction;
+					pos = source_pos + direction * fraction;
 
 					if constexpr(std::is_same_v< Pos, robot_weld_target >){
 						auto current = robot.max_current_;
@@ -121,7 +121,7 @@ namespace robot_simulation{
 							<< "; voltage: " << std::setw(6) << voltage << " V";
 
 						robot.weld_params_.push_back({
-								{pos_},
+								{pos},
 								time,
 								current,
 								voltage
@@ -143,14 +143,14 @@ namespace robot_simulation{
 					time += std::chrono::duration_cast<
 						std::chrono::duration< double > >(step).count();
 
-					std::cout << pos_
+					std::cout << pos
 						<< "; time: " << std::setw(6) << time << " s"
 						<< "; speed: " << std::setw(6) << speed  << " m/s\n";
 				}
 
-				pos_ = target_pos;
+				pos = target_pos;
 
-				std::cout << pos_
+				std::cout << pos
 					<< "; time: " << std::setw(6) << end_time << " s"
 					<< "; speed: " << std::setw(6) << 0.0 << " m/s\n";
 			};
