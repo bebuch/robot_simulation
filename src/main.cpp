@@ -157,7 +157,27 @@ struct ws_service: webservice::json_ws_service{
 						{"type", "3d_ready"}
 					});
 			}, std::allocator< void >());
-}
+	}
+
+
+	void on_exception(std::exception_ptr error)noexcept override{
+		try{
+			std::rethrow_exception(error);
+		}catch(std::exception const& e){
+			std::cout << "\033[1;31mfail ws_service: unexpected exception: "
+				<< e.what() << "\033[0m\n";
+		}catch(...){
+			std::cout << "\033[1;31mfail ws_service: unexpected unknown "
+				"exception\033[0m\n";
+		}
+	}
+
+	void on_exception(
+		webservice::ws_identifier,
+		std::exception_ptr error
+	)noexcept override{
+		on_exception(error);
+	}
 
 
 	robot_simulation::rope_platform platform{
@@ -168,6 +188,22 @@ struct ws_service: webservice::json_ws_service{
 			0.1, 1, {-2, -2, 0}, {2, 2, 4}
 		};
 };
+
+struct printing_error_handler: webservice::error_handler{
+	void on_exception(std::exception_ptr error)noexcept override{
+		try{
+			std::rethrow_exception(error);
+		}catch(std::exception const& e){
+			std::cout << "\033[1;31mfail error_handler: unexpected "
+				"exception: " << e.what() << "\033[0m\n";
+		}catch(...){
+			std::cout << "\033[1;31mfail error_handler: unexpected "
+				"unknown exception\033[0m\n";
+		}
+		std::exit(1);
+	}
+};
+
 
 
 webservice::client* client = nullptr;
@@ -189,7 +225,7 @@ int main(){
 
 		webservice::client client(
 				std::make_unique< ws_service >(),
-				nullptr, // ignore errors and exceptions
+				std::make_unique< printing_error_handler >(),
 				thread_count
 			);
 		client.connect(host, port, resource);
