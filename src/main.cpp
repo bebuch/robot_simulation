@@ -132,8 +132,7 @@ struct ws_service: webservice::json_ws_service{
 					std::cout << "yaw: " << yaw << "\n";
 					std::cout << "add: " << add << "\n";
 
-					(void)add; // TODO: Implement robot weld_to
-					robot.move_to({{x, y, z}, {roll, pitch, yaw}}).get();
+					robot.weld_to({{x, y, z}, {roll, pitch, yaw}}, add).get();
 
 					send_text(identifier, nlohmann::json{
 							{"type", "weld_ready"}

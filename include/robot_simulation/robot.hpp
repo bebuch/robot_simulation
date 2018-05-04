@@ -28,6 +28,8 @@ namespace robot_simulation{
 
 		std::future< void > move_to(robot_position target_pos);
 
+		std::future< void > weld_to(robot_position target_pos, double add);
+
 		robot_position pos()const noexcept{ return pos_; }
 
 
@@ -43,7 +45,8 @@ namespace robot_simulation{
 		robot_position pos_;
 
 		friend auto
-		move_to_fn< robot, robot_position >(robot&, robot_position&&);
+		move_to_fn< robot, robot_position >(
+			robot&, robot_position&&, std::unique_lock< std::mutex >&&);
 	};
 
 

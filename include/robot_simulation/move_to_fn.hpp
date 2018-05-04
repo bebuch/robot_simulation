@@ -20,14 +20,19 @@ namespace robot_simulation{
 
 
 	template < typename Robot, typename Pos >
-	auto move_to_fn(Robot& robot, Pos&& target_pos){
-		return [&robot, target_pos = std::forward< Pos >(target_pos)]{
-				auto& mutex_ = robot.mutex_;
+	auto move_to_fn(
+		Robot& robot,
+		Pos&& target_pos,
+		std::unique_lock< std::mutex >&& lock
+	){
+		return [
+				&robot,
+				target_pos = std::forward< Pos >(target_pos),
+				lock = std::move(lock)
+			]{
 				auto& pos_ = robot.pos_;
 				auto const acceleration_ = robot.acceleration_;
 				auto const max_speed_ = robot.max_speed_;
-
-				std::lock_guard lock(mutex_);
 
 				auto const source_pos = pos_;
 				auto const direction = target_pos - source_pos;

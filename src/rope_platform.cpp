@@ -29,14 +29,16 @@ namespace robot_simulation{
 	}
 
 
-
 	std::future< void > rope_platform::move_to(position target_pos){
+		std::unique_lock lock(mutex_);
+
 		if(is_out_of_range(target_pos, min_, max_)){
 			throw std::out_of_range(
 				"rope_platform out of range target position");
 		}
 
-		return std::async(move_to_fn(*this, std::move(target_pos)));
+		return std::async(move_to_fn(
+			*this, std::move(target_pos), std::move(lock)));
 	}
 
 

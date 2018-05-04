@@ -57,6 +57,21 @@ namespace robot_simulation{
 			};
 	}
 
+	constexpr position operator/(
+		position const& p1,
+		double factor
+	){
+		return {
+				p1.x / factor,
+				p1.y / factor,
+				p1.z / factor
+			};
+	}
+
+	constexpr position normalize(position const& p){
+		return p / std::sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+	}
+
 	constexpr bool is_out_of_range(
 		position const& p,
 		position const& min,

@@ -32,12 +32,31 @@ namespace robot_simulation{
 
 
 	std::future< void > robot::move_to(robot_position target_pos){
+		std::unique_lock lock(mutex_);
+
 		if(is_out_of_range(target_pos.position, min_, max_)){
 			throw std::out_of_range(
 				"robot_position out of range target position");
 		}
 
-		return std::async(move_to_fn(*this, std::move(target_pos)));
+		return std::async(move_to_fn(
+			*this, std::move(target_pos), std::move(lock)));
+	}
+
+	std::future< void > robot::weld_to(robot_position target_pos, double add){
+		std::unique_lock lock(mutex_);
+
+		// ignore for now orientation is wrong, it's just a simulation ...
+		target_pos.position = target_pos.position +
+			normalize(target_pos.position - pos_.position) * add;
+
+		if(is_out_of_range(target_pos.position, min_, max_)){
+			throw std::out_of_range(
+				"robot_position out of range target position");
+		}
+
+		return std::async(move_to_fn(
+			*this, std::move(target_pos), std::move(lock)));
 	}
 
 

@@ -43,7 +43,8 @@ namespace robot_simulation{
 		position pos_;
 
 		friend auto
-		move_to_fn< rope_platform, position >(rope_platform&, position&&);
+		move_to_fn< rope_platform, position >(
+			rope_platform&, position&&, std::unique_lock< std::mutex >&&);
 	};
 
 
