@@ -14,20 +14,23 @@
 #include <cmath>
 #include <iostream>
 #include <chrono>
+#include <random>
 
 
 namespace robot_simulation{
 
 
+	struct robot_weld_target;
+
 	template < typename Robot, typename Pos >
 	auto move_to_fn(
 		Robot& robot,
-		Pos&& target_pos,
+		Pos&& target_to,
 		std::unique_lock< std::mutex >&& lock
 	){
 		return [
 				&robot,
-				target_pos = std::forward< Pos >(target_pos),
+				target_to = std::forward< Pos >(target_to),
 				lock = std::move(lock)
 			]{
 				auto& pos_ = robot.pos_;
@@ -35,6 +38,13 @@ namespace robot_simulation{
 				auto const max_speed_ = robot.max_speed_;
 
 				auto const source_pos = pos_;
+				auto const target_pos = [&target_to]{
+					if constexpr(std::is_same_v< Pos, robot_weld_target >){
+						return static_cast< robot_position >(target_to);
+					}else{
+						return target_to;
+					}
+				}();
 				auto const direction = target_pos - source_pos;
 
 				auto const distance =
@@ -52,6 +62,16 @@ namespace robot_simulation{
 					= acceleration_ * sqr(acceleration_time) / 2;
 				auto const full_speed_way = distance - acceleration_way * 2;
 				auto const full_speed_time = full_speed_way / full_speed;
+
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				std::uniform_real_distribution<> current_dis_on(-2, 2);
+				std::uniform_real_distribution<> voltage_dis_on(-0.5, 0.5);
+				std::uniform_real_distribution<> current_dis_off(-0.05, 0.05);
+				std::uniform_real_distribution<> voltage_dis_off(-0.01, 0.01);
+				auto const weld_distance =
+					robot_simulation::distance(pos_, target_to);
+
 
 				auto const calc =
 					[=](double time){
@@ -83,6 +103,33 @@ namespace robot_simulation{
 
 					auto const fraction = distance_done / distance;
 					pos_ = source_pos + direction * fraction;
+
+					if constexpr(std::is_same_v< Pos, robot_weld_target >){
+						auto current = robot.max_current_;
+						auto voltage = robot.max_voltage_;
+
+						if(distance < weld_distance){
+							current += current_dis_on(gen);
+							voltage += voltage_dis_on(gen);
+						}else{
+							current += current_dis_off(gen);
+							voltage += voltage_dis_off(gen);
+						}
+
+						robot.weld_params_.push_back({
+								{pos_},
+								time,
+								current,
+								voltage
+							});
+					}else{
+						(void)gen;
+						(void)current_dis_on;
+						(void)voltage_dis_on;
+						(void)current_dis_off;
+						(void)voltage_dis_off;
+						(void)weld_distance;
+					}
 
 					auto const tock = std::chrono::high_resolution_clock::now();
 

@@ -68,8 +68,15 @@ namespace robot_simulation{
 			};
 	}
 
+	constexpr double sqr(double v){ return v * v; }
+
+	inline double distance(position const& p1, position const& p2){
+		using std::sqrt;
+		return sqrt(sqr(p1.x - p2.x) + sqr(p1.y - p2.y) + sqr(p1.z - p2.z));
+	}
+
 	constexpr position normalize(position const& p){
-		return p / std::sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+		return p / std::sqrt(sqr(p.x) + sqr(p.y) + sqr(p.z));
 	}
 
 	constexpr bool is_out_of_range(
@@ -178,16 +185,30 @@ namespace robot_simulation{
 	}
 
 
-	constexpr double sqr(double v){ return v * v; }
-
-	inline double distance(position const& p1, position const& p2){
-		using std::sqrt;
-		return sqrt(sqr(p1.x - p2.x) + sqr(p1.y - p2.y) + sqr(p1.z - p2.z));
-	}
-
 	inline double distance(robot_position const& p1, robot_position const& p2){
 		return distance(p1.position, p2.position);
 	}
+
+	struct robot_weld_target: robot_position{
+		double add;
+	};
+
+	constexpr robot_position to_robot_target(
+		robot_position from,
+		robot_weld_target to
+	){
+		// ignore for now orientation is wrong, it's just a simulation ...
+		return robot_position{
+				to.position + normalize(to.position - from.position) * to.add,
+				to.orientation
+			};
+	}
+
+	struct weld_params: robot_position{
+		double time;
+		double current;
+		double voltage;
+	};
 
 
 }

@@ -17,11 +17,15 @@ namespace robot_simulation{
 	robot::robot(
 		double acceleration,
 		double max_speed,
+		double max_current,
+		double max_voltage,
 		position min,
 		position max
 	)
 		: acceleration_(acceleration)
 		, max_speed_(max_speed)
+		, max_current_(max_current)
+		, max_voltage_(max_voltage)
 		, min_(min)
 		, max_(max)
 		, pos_{{0, 0, 0}, {0, 0, 0}}
@@ -43,12 +47,10 @@ namespace robot_simulation{
 			*this, std::move(target_pos), std::move(lock)));
 	}
 
-	std::future< void > robot::weld_to(robot_position target_pos, double add){
+	std::future< void > robot::weld_to(robot_weld_target to){
 		std::unique_lock lock(mutex_);
 
-		// ignore for now orientation is wrong, it's just a simulation ...
-		target_pos.position = target_pos.position +
-			normalize(target_pos.position - pos_.position) * add;
+		auto target_pos = to_robot_target(pos_, to);
 
 		if(is_out_of_range(target_pos.position, min_, max_)){
 			throw std::out_of_range(
@@ -56,7 +58,14 @@ namespace robot_simulation{
 		}
 
 		return std::async(move_to_fn(
-			*this, std::move(target_pos), std::move(lock)));
+			*this, std::move(to), std::move(lock)));
+	}
+
+	std::list< weld_params > robot::get_weld_params(){
+		std::lock_guard lock(weld_params_mutex_);
+		std::list< weld_params > result;
+		result.splice(begin(result), std::move(weld_params_));
+		return result;
 	}
 
 

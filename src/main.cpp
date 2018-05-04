@@ -115,7 +115,6 @@ struct ws_service: webservice::json_ws_service{
 				[this, identifier, data = std::move(data)]{
 					std::cout << "exec: weld_to\n";
 
-
 					auto x = data.at("x").get< double >();
 					auto y = data.at("y").get< double >();
 					auto z = data.at("z").get< double >();
@@ -132,11 +131,39 @@ struct ws_service: webservice::json_ws_service{
 					std::cout << "yaw: " << yaw << "\n";
 					std::cout << "add: " << add << "\n";
 
-					robot.weld_to({{x, y, z}, {roll, pitch, yaw}}, add).get();
+					robot.weld_to({{{x, y, z}, {roll, pitch, yaw}}, add}).get();
 
 					send_text(identifier, nlohmann::json{
 							{"type", "weld_ready"}
 						});
+				}, std::allocator< void >());
+		}else if(type == "get_weld_parameters"){
+			executor().get_executor().defer(
+				[this, identifier]{
+					std::cout << "exec: get_weld_parameters\n";
+
+					auto params = robot.get_weld_params();
+
+					auto message = nlohmann::json::object({
+							{"type", "weld_parameters"},
+							{"list", nlohmann::json::array()}
+						});
+
+					for(auto& param: params){
+						message["list"].push_back(nlohmann::json::object({
+								{"time", param.time},
+								{"x", param.position.x},
+								{"y", param.position.y},
+								{"z", param.position.z},
+								{"roll", param.orientation.roll},
+								{"pitch", param.orientation.pitch},
+								{"yaw", param.orientation.yaw},
+								{"current", param.current},
+								{"voltage", param.voltage}
+							}));
+					}
+
+					send_text(identifier, message);
 				}, std::allocator< void >());
 		}else{
 			throw std::logic_error("unknown type: " + type);
@@ -184,7 +211,7 @@ struct ws_service: webservice::json_ws_service{
 		};
 
 	robot_simulation::robot robot{
-			0.1, 1, {-2, -2, 0}, {2, 2, 4}
+			0.1, 1, 100, 20, {-2, -2, 0}, {2, 2, 4}
 		};
 };
 
