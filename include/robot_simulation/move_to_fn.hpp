@@ -108,13 +108,17 @@ namespace robot_simulation{
 						auto current = robot.max_current_;
 						auto voltage = robot.max_voltage_;
 
-						if(distance < weld_distance){
+						if(distance_done < weld_distance){
 							current += current_dis_on(gen);
 							voltage += voltage_dis_on(gen);
 						}else{
-							current += current_dis_off(gen);
-							voltage += voltage_dis_off(gen);
+							current = current_dis_off(gen);
+							voltage = voltage_dis_off(gen);
 						}
+
+						std::cout
+							<< "; current: " << std::setw(6) << current << " A"
+							<< "; voltage: " << std::setw(6) << voltage << " V";
 
 						robot.weld_params_.push_back({
 								{pos_},
