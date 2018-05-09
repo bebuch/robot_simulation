@@ -54,7 +54,15 @@ namespace robot_simulation{
 				auto const distance =
 					robot_simulation::distance(pos, target_pos);
 
+				std::size_t start_time_ms =
+					std::chrono::time_point_cast< std::chrono::milliseconds >(
+						std::chrono::high_resolution_clock::now()
+					).time_since_epoch().count();;
 				auto time = 0.0;
+
+				auto epoch_time_ms = [start_time_ms, &time]{
+						return std::ceil(start_time_ms + time * 1000);
+					};
 
 				using std::sqrt;
 				using std::min;
@@ -121,18 +129,19 @@ namespace robot_simulation{
 						}
 
 						std::cout
-							<< "; current: " << std::setw(9) << current << " A"
-							<< "; voltage: " << std::setw(9) << voltage << " V";
+							<< "current: " << std::setw(9) << current << " A; "
+							<< "voltage: " << std::setw(9) << voltage << " V; ";
 
 						robot.weld_params_.push_back({
 								{pos},
-								time,
+								epoch_time_ms(),
 								current,
 								voltage
 							});
 
 						gui.send_text(nlohmann::json{
 								{"type", "robot"},
+								{"time", epoch_time_ms()},
 								{"x", pos.position.x},
 								{"y", pos.position.y},
 								{"z", pos.position.z},
@@ -153,6 +162,7 @@ namespace robot_simulation{
 						if constexpr(std::is_same_v< Pos, robot_position >){
 							gui.send_text(nlohmann::json{
 									{"type", "robot"},
+									{"time", epoch_time_ms()},
 									{"x", pos.position.x},
 									{"y", pos.position.y},
 									{"z", pos.position.z},
@@ -163,6 +173,7 @@ namespace robot_simulation{
 									{"voltage", 0}
 								});
 						}else{
+							(void) epoch_time_ms;
 							gui.send_text(nlohmann::json{
 									{"type", "carrier"},
 									{"x", pos.x},
