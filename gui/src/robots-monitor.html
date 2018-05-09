@@ -66,14 +66,12 @@
             type: Number,
             value: 20
           },
-          carrier: {
+          carrierBountingBox: {
             type: Object,
-            value: {x: 0, y: 0, z: 0}
-          },
-          robot: {
-            type: Object,
-            value: {time: 0, x: 0, y: 0, z: 0, roll: 0, yaw: 0, pitch: 0,
-              current: 0, voltage: 0}
+            value: {
+              min: {x: 0, y: 0, z: 0},
+              max: {x: 10, y: 10, z: 10}
+            }
           }
         };
       }
@@ -88,6 +86,11 @@
         // buffer over the last 2 seconds
         this.currentBuffer = new Array(200).fill(0);
         this.voltageBuffer = new Array(200).fill(0);
+
+        this.carrier = {x: 2, y: 2, z: 2};
+        this.robot = {time: 0, x: 0, y: 0, z: 0, roll: 0, yaw: 0, pitch: 0,
+          current: 0, voltage: 0};
+
       }
 
       ready(){
@@ -168,29 +171,143 @@
 
       _drawTop(){
         const ctx = this.$.top.getContext('2d');
-        const w = this.$.top.width;
-        const h = this.$.top.height;
-        ctx.clearRect(0, 0, w, h);
+        const s = this.$.top.width;
+        ctx.clearRect(0, 0, s, s);
 
-        ctx.strokeRect(0, 0, w, h);
+        let min = this.carrierBountingBox.min;
+        let max = this.carrierBountingBox.max;
+        let diff = {x: max.x - min.x, y: max.y - min.y, z: max.z - min.z};
+
+        let c = this.carrier;
+        let r = this.robot;
+
+        // border around the cell
+        let b = 0.15 * s;
+
+        // carrier size in the drawing
+        let ps = 0.1 * s;
+
+        ctx.strokeRect(b, b, s - 2 * b, s - 2 * b);
+        let local_x = b + c.x / diff.x * (s - 2 * b);
+        let local_y = b + c.y / diff.y * (s - 2 * b);
+
+        // draw carrier
+        ctx.beginPath();
+        ctx.moveTo(b, b);
+        ctx.lineTo(local_x - ps / 2, local_y - ps / 2);
+        ctx.moveTo(b, (s - b));
+        ctx.lineTo(local_x - ps / 2, local_y + ps / 2);
+        ctx.moveTo((s - b), b);
+        ctx.lineTo(local_x + ps / 2, local_y - ps / 2);
+        ctx.moveTo((s - b), (s - b));
+        ctx.lineTo(local_x + ps / 2, local_y + ps / 2);
+        ctx.stroke();
+        ctx.strokeRect(local_x - ps / 2, local_y - ps / 2, ps, ps);
+
+        // Draw the headline in the right top corner
+        ctx.strokeStyle = 'black';
+        ctx.font = s / 40 * 3 + "px Sans Serif";
+        ctx.lineWidth = s / 800 * 3;
+        let y_pos = s / 40 * 3 + s / 2000 * 3;
+        ctx.fillText("top", s / 150 * 3, y_pos);
+
+        ctx.strokeRect(0, 0, s, s);
       }
 
       _drawFront(){
         const ctx = this.$.front.getContext('2d');
-        const w = this.$.front.width;
-        const h = this.$.front.height;
-        ctx.clearRect(0, 0, w, h);
+        const s = this.$.top.width;
+        ctx.clearRect(0, 0, s, s);
 
-        ctx.strokeRect(0, 0, w, h);
+        let min = this.carrierBountingBox.min;
+        let max = this.carrierBountingBox.max;
+        let diff = {x: max.x - min.x, y: max.y - min.y, z: max.z - min.z};
+
+        let c = this.carrier;
+        let r = this.robot;
+
+        // border around the cell
+        let b = 0.15 * s;
+
+        // carrier size in the drawing
+        let ps = 0.1 * s;
+
+        ctx.beginPath();
+        ctx.moveTo(b, s - b);
+        ctx.lineTo(b, b);
+        ctx.lineTo(s - b, b);
+        ctx.lineTo(s - b, s - b);
+        ctx.stroke();
+
+        let local_x = b + c.x / diff.x * (s - 2 * b);
+        let local_z = b + c.z / diff.z * (s - 2 * b);
+
+        // draw carrier
+        ctx.beginPath();
+        ctx.moveTo(b, b);
+        ctx.lineTo(local_x - ps / 2, local_z - ps / 20);
+        ctx.moveTo((s - b), b);
+        ctx.lineTo(local_x + ps / 2, local_z - ps / 20);
+        ctx.stroke();
+        ctx.strokeRect(local_x - ps / 2, local_z - ps / 20, ps, ps / 10);
+
+
+        // Draw the headline in the right top corner
+        ctx.strokeStyle = 'black';
+        ctx.font = s / 40 * 3 + "px Sans Serif";
+        ctx.lineWidth = s / 800 * 3;
+        let y_pos = s / 40 * 3 + s / 2000 * 3;
+        ctx.fillText("front", s / 150 * 3, y_pos);
+
+        ctx.strokeRect(0, 0, s, s);
       }
 
       _drawRight(){
         const ctx = this.$.right.getContext('2d');
-        const w = this.$.right.width;
-        const h = this.$.right.height;
-        ctx.clearRect(0, 0, w, h);
+        const s = this.$.top.width;
+        ctx.clearRect(0, 0, s, s);
 
-        ctx.strokeRect(0, 0, w, h);
+        let min = this.carrierBountingBox.min;
+        let max = this.carrierBountingBox.max;
+        let diff = {x: max.x - min.x, y: max.y - min.y, z: max.z - min.z};
+
+        let c = this.carrier;
+        let r = this.robot;
+
+        // border around the cell
+        let b = 0.15 * s;
+
+        // carrier size in the drawing
+        let ps = 0.1 * s;
+
+        ctx.beginPath();
+        ctx.moveTo(b, s - b);
+        ctx.lineTo(b, b);
+        ctx.lineTo(s - b, b);
+        ctx.lineTo(s - b, s - b);
+        ctx.stroke();
+
+        let local_y = b + (diff.y - c.y) / diff.y * (s - 2 * b);
+        let local_z = b + c.z / diff.z * (s - 2 * b);
+
+        // draw carrier
+        ctx.beginPath();
+        ctx.moveTo(b, b);
+        ctx.lineTo(local_y - ps / 2, local_z - ps / 20);
+        ctx.moveTo((s - b), b);
+        ctx.lineTo(local_y + ps / 2, local_z - ps / 20);
+        ctx.stroke();
+        ctx.strokeRect(local_y - ps / 2, local_z - ps / 20, ps, ps / 10);
+
+
+        // Draw the headline in the right top corner
+        ctx.strokeStyle = 'black';
+        ctx.font = s / 40 * 3 + "px Sans Serif";
+        ctx.lineWidth = s / 800 * 3;
+        let y_pos = s / 40 * 3 + s / 2000 * 3;
+        ctx.fillText("right", s / 150 * 3, y_pos);
+
+        ctx.strokeRect(0, 0, s, s);
       }
 
       _drawCurrentAndVoltage(){
@@ -217,9 +334,8 @@
           }
           ctx.stroke();
 
-          ctx.strokeStyle = 'black';
-
           // Draw the headline in the right top corner
+          ctx.strokeStyle = 'black';
           ctx.font = h / 4 + "px Sans Serif";
           ctx.lineWidth = h / 80;
           let y_pos = h / 4 + h / 20;
