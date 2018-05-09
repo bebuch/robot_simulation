@@ -20,8 +20,49 @@ namespace robot_simulation{
 	public:
 		ws_client_service(ws_server_service& gui)
 			: platform_(gui, 0.4, 2, {0.8, 0.3, 0.5}, {15, 17, 14})
-			, robot_(gui, 0.1, 1, 100, 20, {-2, -2, 0}, {2, 2, 4}) {}
-
+			, robot_(gui, 0.1, 1, 100, 20, {-2, -2, 0}, {2, 2, 4})
+		{
+			auto platform_pos = platform_.pos();
+			auto robot_pos = robot_.pos();
+			gui.set_init(nlohmann::json::object({
+					{"type", "init"},
+					{"carrier_minmax", nlohmann::json::object({
+						{"min", nlohmann::json::object({
+							{"x", platform_.min_.x},
+							{"y", platform_.min_.y},
+							{"z", platform_.min_.z}})},
+						{"max", nlohmann::json::object({
+							{"x", platform_.max_.x},
+							{"y", platform_.max_.y},
+							{"z", platform_.max_.z}})}})},
+					{"robot_minmax", nlohmann::json::object({
+						{"min", nlohmann::json::object({
+							{"x", robot_.min_.x},
+							{"y", robot_.min_.y},
+							{"z", robot_.min_.z}})},
+						{"max", nlohmann::json::object({
+							{"x", robot_.max_.x},
+							{"y", robot_.max_.y},
+							{"z", robot_.max_.z}})}})},
+					{"current_max", robot_.max_current_},
+					{"voltage_max", robot_.max_voltage_},
+					{"carrier", nlohmann::json::object({
+							{"x", platform_pos.x},
+							{"y", platform_pos.y},
+							{"z", platform_pos.z}
+						})},
+					{"robot", nlohmann::json::object({
+							{"x", robot_pos.position.x},
+							{"y", robot_pos.position.y},
+							{"z", robot_pos.position.z},
+							{"roll", robot_pos.orientation.roll},
+							{"yaw", robot_pos.orientation.yaw},
+							{"pitch", robot_pos.orientation.pitch},
+							{"current", 0},
+							{"voltage", 0}
+						})}
+				}));
+		}
 
 	private:
 		void on_open(webservice::ws_identifier)override{

@@ -31,17 +31,17 @@ namespace robot_simulation{
 
 		position pos()const{ return pos_; }
 
+		double const acceleration_;
+		double const max_speed_;
+
+		position const min_;
+		position const max_;
+
 
 	private:
 		std::mutex mutex_;
 
 		ws_server_service& gui_;
-
-		double acceleration_;
-		double max_speed_;
-
-		position min_;
-		position max_;
 
 		position pos_;
 

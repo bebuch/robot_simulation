@@ -72,6 +72,13 @@
               min: {x: 0, y: 0, z: 0},
               max: {x: 10, y: 10, z: 10}
             }
+          },
+          robotBountingBox: {
+            type: Object,
+            value: {
+              min: {x: 0, y: 0, z: 0},
+              max: {x: 10, y: 10, z: 10}
+            }
           }
         };
       }
@@ -151,6 +158,16 @@
                     json.current;
                   this.voltageBuffer[this.voltageBuffer.length - 1] =
                     json.voltage;
+
+                  this._drawRobots();
+                break;
+                case 'init':
+                  this.carrierBountingBox = json.carrier_minmax;
+                  this.robotBountingBox = json.robot_minmax;
+                  this.maxCurrent = json.max_current;
+                  this.maxVoltage = json.max_voltage;
+                  this.carrier = json.carrier;
+                  this.robot = json.robot;
 
                   this._drawRobots();
                 break;

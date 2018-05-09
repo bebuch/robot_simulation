@@ -39,12 +39,6 @@ namespace robot_simulation{
 		std::list< weld_params > get_weld_params();
 
 
-	private:
-		std::mutex mutex_;
-		std::mutex weld_params_mutex_;
-
-		ws_server_service& gui_;
-
 		double acceleration_;
 		double max_speed_;
 		double max_current_;
@@ -52,6 +46,13 @@ namespace robot_simulation{
 
 		position min_;
 		position max_;
+
+
+	private:
+		std::mutex mutex_;
+		std::mutex weld_params_mutex_;
+
+		ws_server_service& gui_;
 
 		robot_position pos_;
 

@@ -19,9 +19,14 @@ namespace robot_simulation{
 	public:
 		using webservice::json_ws_service::json_ws_service;
 
+		void set_init(nlohmann::json&& json){
+			json_ = json;
+		}
+
 	private:
-		void on_open(webservice::ws_identifier)override{
+		void on_open(webservice::ws_identifier identifier)override{
 			std::cout << "opened gui session\n";
+			send_text(identifier, json_);
 		}
 
 		void on_close(webservice::ws_identifier)override{
@@ -41,6 +46,8 @@ namespace robot_simulation{
 					"exception\033[0m\n";
 			}
 		}
+
+		nlohmann::json json_;
 	};
 
 

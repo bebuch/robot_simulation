@@ -19,11 +19,11 @@ namespace robot_simulation{
 		position min,
 		position max
 	)
-		: gui_(gui)
-		, acceleration_(acceleration)
+		: acceleration_(acceleration)
 		, max_speed_(max_speed)
 		, min_(min)
 		, max_(max)
+		, gui_(gui)
 		, pos_{min.x, min.y, max.z}
 	{
 		std::cout << "   " << pos_
