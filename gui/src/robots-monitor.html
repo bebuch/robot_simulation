@@ -11,8 +11,14 @@
       h2{
         text-align:center;
       }
+
+      #cv{
+        width: 100%;
+        height: 100px;
+      }
     </style>
     <h2><state-display state="[[connected]]">rotbots monitor</state-display></h2>
+    <canvas id="cv"></canvas>
   </template>
 
   <script>
@@ -20,7 +26,7 @@
      * @customElement
      * @polymer
      */
-    class RoboterMonitor extends Polymer.Element {
+    class RoboterMonitor extends Polymer.mixinBehaviors([Polymer.IronResizableBehavior], Polymer.Element) {
       static get is() { return 'robots-monitor'; }
       static get properties() {
         return {
@@ -43,16 +49,24 @@
             type: String,
             value: 'red'
           },
+          maxCurrent: {
+            type: Number,
+            value: 100
+          },
+          maxVoltage: {
+            type: Number,
+            value: 20
+          },
           carrier: {
             type: Object,
             value: {x: 0, y: 0, z: 0},
-            observer: '_draw'
+            observer: '_drawRobots'
           },
           robot: {
             type: Object,
             value: {time: 0, x: 0, y: 0, z: 0, roll: 0, yaw: 0, pitch: 0,
               current: 0, voltage: 0},
-            observer: '_draw'
+            observer: '_drawRobots'
           }
         };
       }
@@ -63,10 +77,24 @@
         // don't try to connect until the DOM is ready
         this.domReady = false;
         this.connection_try = null;
+
+        // buffer over the last 2 seconds
+        this.currentBuffer = new Array(200).fill(0);
+        this.voltageBuffer = new Array(200).fill(0);
       }
 
       ready(){
         super.ready();
+
+        this.addEventListener('iron-resize', this._resize);
+
+        setInterval(this._drawCurrentAndVoltage.bind(this), 500);
+        setInterval(function(){
+            this.currentBuffer.shift();
+            this.currentBuffer.push(0);
+            this.voltageBuffer.shift();
+            this.voltageBuffer.push(0);
+          }.bind(this), 100);
 
         this.domReady = true;
         this._connect();
@@ -102,6 +130,10 @@
                       roll: json.roll, yaw: json.yaw, pitch: json.pitch,
                       current: json.current, voltage: json.voltage
                     };
+                  this.currentBuffer[this.currentBuffer.length - 1] =
+                    json.current;
+                  this.voltageBuffer[this.voltageBuffer.length - 1] =
+                    json.voltage;
                 break;
                 default:
                   console.log("unknown json message type " + json.type);
@@ -112,8 +144,58 @@
           }.bind(this);
       }
 
-      _draw(){
+      _drawRobots(){
         console.log(this.carrier, this.robot);
+      }
+
+      _drawCurrentAndVoltage(){
+        const ctx = this.$.cv.getContext('2d');
+        const w = this.$.cv.width;
+        const h = this.$.cv.height;
+
+        ctx.clearRect(0, 0, w, h);
+
+        let max = Math.max(this.maxCurrent, this.maxVoltage);
+
+        [
+          {buffer: this.currentBuffer, text: 'current'},
+          {buffer: this.voltageBuffer, text: 'voltage'}
+        ].map(function(this_){
+          let local_x = (i) => i / this_.buffer.length * w + w / this_.buffer.length / 2;
+          let local_y = (i) => (h - this_.buffer[i] / max * 0.9 * h) - 0.05 * h;
+
+          ctx.strokeStyle = this_.text == 'current' ? 'red' : 'blue';
+          ctx.fillStyle = ctx.strokeStyle;
+          ctx.beginPath();
+          ctx.moveTo(local_x(0), local_y(0));
+          for(let i = 1; i < this_.buffer.length; ++i){
+            ctx.lineTo(local_x(i), local_y(i));
+          }
+          ctx.stroke();
+
+          ctx.strokeStyle = 'black';
+
+          // Draw the headline in the right top corner
+          ctx.font = h / 4 + "px Sans Serif";
+          ctx.lineWidth = h / 80;
+          let y_pos = h / 4 + h / 20;
+          if(this_.text != 'current'){
+            y_pos += h / 4;
+          }
+          ctx.strokeText(this_.text, h / 15, y_pos);
+          ctx.fillText(this_.text, h / 15, y_pos);
+
+          ctx.strokeRect(0, 0, w, h);
+        }.bind(this));
+      }
+
+      _resize(){
+        this.$.cv.width = this.$.cv.clientWidth;
+        this.$.cv.height = this.$.cv.clientHeight;
+
+        this._drawRobots();
+        this._drawCurrentAndVoltage();
+        this._drawCurrentAndVoltage();
       }
     }
 
