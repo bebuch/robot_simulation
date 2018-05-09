@@ -3,3 +3,6 @@ bin
 test/bin
 **.tmp
 doc/html
+gui/bower_components/
+gui/build/
+gui/node_modules/

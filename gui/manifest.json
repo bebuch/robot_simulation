@@ -1,0 +1,7 @@
+{
+  "name": "Robots Monitor",
+  "short_name": "Robots Monitor",
+  "description": "frontend of bebuch/robots_simulation",
+  "start_url": "/",
+  "display": "standalone"
+}
