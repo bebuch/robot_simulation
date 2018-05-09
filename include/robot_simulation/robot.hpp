@@ -22,6 +22,7 @@ namespace robot_simulation{
 	class robot{
 	public:
 		robot(
+			ws_server_service& gui,
 			double acceleration,
 			double max_speed,
 			double max_current,
@@ -41,6 +42,8 @@ namespace robot_simulation{
 	private:
 		std::mutex mutex_;
 		std::mutex weld_params_mutex_;
+
+		ws_server_service& gui_;
 
 		double acceleration_;
 		double max_speed_;

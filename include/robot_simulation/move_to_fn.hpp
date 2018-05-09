@@ -9,6 +9,8 @@
 #ifndef _robot_simulation__move_to_fn__hpp_INCLUDED_
 #define _robot_simulation__move_to_fn__hpp_INCLUDED_
 
+#include "ws_server_service.hpp"
+
 #include <mutex>
 #include <thread>
 #include <cmath>

@@ -21,6 +21,7 @@ namespace robot_simulation{
 	class rope_platform{
 	public:
 		rope_platform(
+			ws_server_service& gui,
 			double acceleration,
 			double max_speed,
 			position min,
@@ -33,6 +34,8 @@ namespace robot_simulation{
 
 	private:
 		std::mutex mutex_;
+
+		ws_server_service& gui_;
 
 		double acceleration_;
 		double max_speed_;

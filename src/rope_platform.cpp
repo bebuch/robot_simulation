@@ -13,12 +13,14 @@ namespace robot_simulation{
 
 
 	rope_platform::rope_platform(
+		ws_server_service& gui,
 		double acceleration,
 		double max_speed,
 		position min,
 		position max
 	)
-		: acceleration_(acceleration)
+		: gui_(gui)
+		, acceleration_(acceleration)
 		, max_speed_(max_speed)
 		, min_(min)
 		, max_(max)

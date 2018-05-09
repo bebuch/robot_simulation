@@ -15,6 +15,7 @@ namespace robot_simulation{
 
 
 	robot::robot(
+		ws_server_service& gui,
 		double acceleration,
 		double max_speed,
 		double max_current,
@@ -22,7 +23,8 @@ namespace robot_simulation{
 		position min,
 		position max
 	)
-		: acceleration_(acceleration)
+		: gui_(gui)
+		, acceleration_(acceleration)
 		, max_speed_(max_speed)
 		, max_current_(max_current)
 		, max_voltage_(max_voltage)
