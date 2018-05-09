@@ -71,8 +71,8 @@ namespace robot_simulation{
 				std::mt19937 gen(rd());
 				std::uniform_real_distribution<> current_dis_on(-2, 2);
 				std::uniform_real_distribution<> voltage_dis_on(-0.5, 0.5);
-				std::uniform_real_distribution<> current_dis_off(-0.05, 0.05);
-				std::uniform_real_distribution<> voltage_dis_off(-0.01, 0.01);
+				std::uniform_real_distribution<> current_dis_off(0, 0.10);
+				std::uniform_real_distribution<> voltage_dis_off(0, 0.02);
 				auto const weld_distance =
 					robot_simulation::distance(pos, target_to);
 
