@@ -9,8 +9,10 @@
 #include <robot_simulation/rope_platform.hpp>
 #include <robot_simulation/robot.hpp>
 
+#include <webservice/file_request_handler.hpp>
+#include <webservice/ws_service_handler.hpp>
 #include <webservice/json_ws_service.hpp>
-#include <webservice/client.hpp>
+#include <webservice/server.hpp>
 
 #include <boost/lexical_cast.hpp>
 
@@ -18,7 +20,45 @@
 #include <csignal>
 
 
-struct ws_service: webservice::json_ws_service{
+class file_request_handler: public webservice::file_request_handler{
+public:
+	using webservice::file_request_handler::file_request_handler;
+
+private:
+	void on_exception(std::exception_ptr error)noexcept override{
+		try{
+			std::rethrow_exception(error);
+		}catch(std::exception const& e){
+			std::cout
+				<< "\033[1;31mfail file_request_handler: unexpected exception: "
+				<< e.what() << "\033[0m\n";
+		}catch(...){
+			std::cout <<
+				"\033[1;31mfail file_request_handler: unexpected unknown "
+				"exception\033[0m\n";
+		}
+	}
+};
+
+
+class ws_service_handler: public webservice::ws_service_handler{
+	void on_exception(std::exception_ptr error)noexcept override{
+		try{
+			std::rethrow_exception(error);
+		}catch(std::exception const& e){
+			std::cout
+				<< "\033[1;31mfail ws_service_handler: unexpected exception: "
+				<< e.what() << "\033[0m\n";
+		}catch(...){
+			std::cout <<
+				"\033[1;31mfail ws_service_handler: unexpected unknown "
+				"exception\033[0m\n";
+		}
+	}
+};
+
+
+struct ws_client_service: webservice::json_ws_service{
 	using webservice::json_ws_service::json_ws_service;
 
 	void on_open(webservice::ws_identifier)override{
@@ -232,35 +272,51 @@ struct printing_error_handler: webservice::error_handler{
 
 
 
-webservice::client* client = nullptr;
+webservice::server* server = nullptr;
 
 void on_interrupt(int signum){
 	std::signal(signum, SIG_DFL);
 	std::cout << "Signal: " << signum << '\n';
-	client->shutdown();
+	server->shutdown();
 	std::cout << "Signal ready\n";
 }
 
 
 int main(){
 	try{
-		std::string const host = "127.0.0.1";
-		std::string const port = "8080";
 		std::uint8_t const thread_count = 10;
-		std::string const resource = "/TCC";
 
-		webservice::client client(
-				std::make_unique< ws_service >(),
+		std::string server_root = "gui";
+		auto server_address = boost::asio::ip::make_address("127.0.0.1");
+		std::uint16_t server_port = 8090;
+
+		std::string const client_host = "127.0.0.1";
+		std::string const client_port = "8080";
+		std::string const client_resource = "/TCC";
+
+		auto ws_handler_ptr = std::make_unique< ws_service_handler >();
+		auto& ws_handler = *ws_handler_ptr;
+
+		webservice::server server(
+				std::make_unique< file_request_handler >(server_root),
+				std::move(ws_handler_ptr),
 				std::make_unique< printing_error_handler >(),
+				server_address,
+				server_port,
 				thread_count
 			);
-		client.connect(host, port, resource);
 
-		// Allow to shutdown the client with CTRL+C
-		::client = &client;
+		ws_handler.add_service(
+			client_resource, std::make_unique< ws_client_service >());
+
+		// Connect to the control server
+		server.connect(client_host, client_port, client_resource);
+
+		// Allow to shutdown the server with CTRL+C
+		::server = &server;
 		std::signal(SIGINT, &on_interrupt);
 
-		client.block();
+		server.block();
 
 		return 0;
 	}catch(std::exception const& e){
