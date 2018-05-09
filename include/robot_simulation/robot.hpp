@@ -58,11 +58,11 @@ namespace robot_simulation{
 		std::list< weld_params > weld_params_;
 
 		friend auto
-		move_to_fn< robot, robot_position >(
+		move_to_fn< robot, robot_position >(ws_server_service&,
 			robot&, robot_position&&, std::unique_lock< std::mutex >&&);
 
 		friend auto
-		move_to_fn< robot, robot_weld_target >(
+		move_to_fn< robot, robot_weld_target >(ws_server_service&,
 			robot&, robot_weld_target&&, std::unique_lock< std::mutex >&&);
 	};
 

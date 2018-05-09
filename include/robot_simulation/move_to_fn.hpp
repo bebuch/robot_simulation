@@ -26,11 +26,13 @@ namespace robot_simulation{
 
 	template < typename Robot, typename Pos >
 	auto move_to_fn(
+		ws_server_service& gui,
 		Robot& robot,
 		Pos&& target_to,
 		std::unique_lock< std::mutex >&& lock
 	){
 		return [
+				&gui,
 				&robot,
 				target_to = std::forward< Pos >(target_to),
 				lock = std::move(lock)
@@ -128,6 +130,18 @@ namespace robot_simulation{
 								current,
 								voltage
 							});
+
+						gui.send_text(nlohmann::json{
+								{"type", "robot"},
+								{"x", pos.position.x},
+								{"y", pos.position.y},
+								{"z", pos.position.z},
+								{"roll", pos.orientation.roll},
+								{"yaw", pos.orientation.yaw},
+								{"pitch", pos.orientation.pitch},
+								{"current", current},
+								{"voltage", voltage}
+							});
 					}else{
 						(void)gen;
 						(void)current_dis_on;
@@ -135,6 +149,27 @@ namespace robot_simulation{
 						(void)current_dis_off;
 						(void)voltage_dis_off;
 						(void)weld_distance;
+
+						if constexpr(std::is_same_v< Pos, robot_position >){
+							gui.send_text(nlohmann::json{
+									{"type", "robot"},
+									{"x", pos.position.x},
+									{"y", pos.position.y},
+									{"z", pos.position.z},
+									{"roll", pos.orientation.roll},
+									{"yaw", pos.orientation.yaw},
+									{"pitch", pos.orientation.pitch},
+									{"current", 0},
+									{"voltage", 0}
+								});
+						}else{
+							gui.send_text(nlohmann::json{
+									{"type", "carrier"},
+									{"x", pos.x},
+									{"y", pos.y},
+									{"z", pos.z}
+								});
+						}
 					}
 
 					auto const tock = std::chrono::high_resolution_clock::now();

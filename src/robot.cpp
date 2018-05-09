@@ -45,7 +45,7 @@ namespace robot_simulation{
 				"robot_position out of range target position");
 		}
 
-		return std::async(move_to_fn(
+		return std::async(move_to_fn(gui_,
 			*this, std::move(target_pos), std::move(lock)));
 	}
 
@@ -59,7 +59,7 @@ namespace robot_simulation{
 				"robot_position out of range target position");
 		}
 
-		return std::async(move_to_fn(
+		return std::async(move_to_fn(gui_,
 			*this, std::move(to), std::move(lock)));
 	}
 

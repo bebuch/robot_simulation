@@ -81,7 +81,7 @@ namespace robot_simulation{
 								{"z", pos.z}
 							});
 					}, std::allocator< void >());
-			}else if(type == "robo__move_to"){
+			}else if(type == "robot_move_to"){
 				executor().get_executor().defer(
 					[this, identifier, data = std::move(data)]{
 						std::cout << "exec: robot_move_to\n";

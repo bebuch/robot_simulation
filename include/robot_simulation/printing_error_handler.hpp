@@ -26,7 +26,6 @@ namespace robot_simulation{
 				std::cout << "\033[1;31mfail error_handler: unexpected "
 					"unknown exception\033[0m\n";
 			}
-			std::exit(1);
 		}
 	};
 
