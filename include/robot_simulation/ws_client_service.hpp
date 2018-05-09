@@ -19,12 +19,17 @@ namespace robot_simulation{
 	class ws_client_service: public webservice::json_ws_service{
 	public:
 		ws_client_service(ws_server_service& gui)
-			: platform_(gui, 0.4, 2, {0.8, 0.3, 0.5}, {15, 17, 14})
+			: gui_(gui)
+			, platform_(gui, 0.4, 2, {0.8, 0.3, 0.5}, {15, 17, 14})
 			, robot_(gui, 0.1, 1, 100, 20, {-2, -2, 0}, {2, 2, 4})
 		{
+			set_init();
+		}
+
+		void set_init(){
 			auto platform_pos = platform_.pos();
 			auto robot_pos = robot_.pos();
-			gui.set_init(nlohmann::json::object({
+			gui_.set_init(nlohmann::json::object({
 					{"type", "init"},
 					{"carrier_minmax", nlohmann::json::object({
 						{"min", nlohmann::json::object({
@@ -121,6 +126,8 @@ namespace robot_simulation{
 								{"y", pos.y},
 								{"z", pos.z}
 							});
+
+						set_init();
 					}, std::allocator< void >());
 			}else if(type == "robot_move_to"){
 				executor().get_executor().defer(
@@ -153,6 +160,8 @@ namespace robot_simulation{
 								{"pitch", pos.orientation.pitch},
 								{"yaw", pos.orientation.yaw}
 							});
+
+						set_init();
 					}, std::allocator< void >());
 			}else if(type == "weld_to"){
 				executor().get_executor().defer(
@@ -181,6 +190,8 @@ namespace robot_simulation{
 						send_text(identifier, nlohmann::json{
 								{"type", "weld_ready"}
 							});
+
+						set_init();
 					}, std::allocator< void >());
 			}else if(type == "get_weld_parameters"){
 				executor().get_executor().defer(
@@ -250,6 +261,8 @@ namespace robot_simulation{
 			on_exception(error);
 		}
 
+
+		ws_server_service& gui_;
 
 		rope_platform platform_;
 
