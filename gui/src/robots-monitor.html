@@ -2,10 +2,10 @@
 <link rel="import" href="../bower_components/state-display/state-display.html">
 
 <dom-module id="robots-monitor">
-  <template>
+  <template strip-whitespace>
     <style>
       :host {
-        display: block;
+        display:block;
       }
 
       h2{
@@ -13,12 +13,21 @@
       }
 
       #cv{
-        width: 100%;
-        height: 100px;
+        display:block;
+        width:100%;
+      }
+
+      .robots{
+        display:inline-block;
+        width:calc(100% / 3);
       }
     </style>
+
     <h2><state-display state="[[connected]]">rotbots monitor</state-display></h2>
     <canvas id="cv"></canvas>
+    <canvas class="robots" id="top"></canvas>
+    <canvas class="robots" id="front"></canvas>
+    <canvas class="robots" id="right"></canvas>
   </template>
 
   <script>
@@ -59,14 +68,12 @@
           },
           carrier: {
             type: Object,
-            value: {x: 0, y: 0, z: 0},
-            observer: '_drawRobots'
+            value: {x: 0, y: 0, z: 0}
           },
           robot: {
             type: Object,
             value: {time: 0, x: 0, y: 0, z: 0, roll: 0, yaw: 0, pitch: 0,
-              current: 0, voltage: 0},
-            observer: '_drawRobots'
+              current: 0, voltage: 0}
           }
         };
       }
@@ -97,7 +104,11 @@
           }.bind(this), 100);
 
         this.domReady = true;
+
         this._connect();
+
+        this._drawCurrentAndVoltage();
+        this._drawRobots();
       }
 
       _connect(){
@@ -122,6 +133,8 @@
               switch(json.type){
                 case 'carrier':
                   this.carrier = {x: json.x, y: json.y, z: json.z};
+
+                  this._drawRobots();
                 break;
                 case 'robot':
                   this.robot = {
@@ -130,10 +143,13 @@
                       roll: json.roll, yaw: json.yaw, pitch: json.pitch,
                       current: json.current, voltage: json.voltage
                     };
+
                   this.currentBuffer[this.currentBuffer.length - 1] =
                     json.current;
                   this.voltageBuffer[this.voltageBuffer.length - 1] =
                     json.voltage;
+
+                  this._drawRobots();
                 break;
                 default:
                   console.log("unknown json message type " + json.type);
@@ -145,14 +161,42 @@
       }
 
       _drawRobots(){
-        console.log(this.carrier, this.robot);
+        this._drawTop();
+        this._drawFront();
+        this._drawRight();
+      }
+
+      _drawTop(){
+        const ctx = this.$.top.getContext('2d');
+        const w = this.$.top.width;
+        const h = this.$.top.height;
+        ctx.clearRect(0, 0, w, h);
+
+        ctx.strokeRect(0, 0, w, h);
+      }
+
+      _drawFront(){
+        const ctx = this.$.front.getContext('2d');
+        const w = this.$.front.width;
+        const h = this.$.front.height;
+        ctx.clearRect(0, 0, w, h);
+
+        ctx.strokeRect(0, 0, w, h);
+      }
+
+      _drawRight(){
+        const ctx = this.$.right.getContext('2d');
+        const w = this.$.right.width;
+        const h = this.$.right.height;
+        ctx.clearRect(0, 0, w, h);
+
+        ctx.strokeRect(0, 0, w, h);
       }
 
       _drawCurrentAndVoltage(){
         const ctx = this.$.cv.getContext('2d');
         const w = this.$.cv.width;
         const h = this.$.cv.height;
-
         ctx.clearRect(0, 0, w, h);
 
         let max = Math.max(this.maxCurrent, this.maxVoltage);
@@ -184,17 +228,23 @@
           }
           ctx.strokeText(this_.text, h / 15, y_pos);
           ctx.fillText(this_.text, h / 15, y_pos);
-
-          ctx.strokeRect(0, 0, w, h);
         }.bind(this));
+
+        ctx.strokeRect(0, 0, w, h);
       }
 
       _resize(){
         this.$.cv.width = this.$.cv.clientWidth;
-        this.$.cv.height = this.$.cv.clientHeight;
+        this.$.cv.height = this.$.cv.clientWidth / 10;
+
+        this.$.top.width = this.$.cv.width / 3;
+        this.$.top.height = this.$.cv.width / 3;
+        this.$.front.width = this.$.cv.width / 3;
+        this.$.front.height = this.$.cv.width / 3;
+        this.$.right.width = this.$.cv.width / 3;
+        this.$.right.height = this.$.cv.width / 3;
 
         this._drawRobots();
-        this._drawCurrentAndVoltage();
         this._drawCurrentAndVoltage();
       }
     }
