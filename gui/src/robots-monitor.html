@@ -50,7 +50,8 @@
           },
           robot: {
             type: Object,
-            value: {x: 0, y: 0, z: 0, roll: 0, yaw: 0, pitch: 0},
+            value: {x: 0, y: 0, z: 0, roll: 0, yaw: 0, pitch: 0,
+              current: 0, voltage: 0},
             observer: '_draw'
           }
         };
@@ -97,7 +98,8 @@
                 case 'robot':
                   this.robot = {
                       x: json.x, y: json.y, z: json.z,
-                      roll: json.roll, yaw: json.yaw, pitch: json.pitch
+                      roll: json.roll, yaw: json.yaw, pitch: json.pitch,
+                      current: json.current, voltage: json.voltage
                     };
                 break;
                 default:
