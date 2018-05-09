@@ -205,8 +205,8 @@
         let ps = 0.1 * s;
 
         ctx.strokeRect(b, b, s - 2 * b, s - 2 * b);
-        let local_x = b + c.x / diff.x * (s - 2 * b);
-        let local_y = b + c.y / diff.y * (s - 2 * b);
+        let local_x = b + (c.x - min.x) / diff.x * (s - 2 * b);
+        let local_y = b + (c.y - min.y) / diff.y * (s - 2 * b);
 
         // draw carrier
         ctx.beginPath();
@@ -256,8 +256,8 @@
         ctx.lineTo(s - b, s - b);
         ctx.stroke();
 
-        let local_x = b + c.x / diff.x * (s - 2 * b);
-        let local_z = b + c.z / diff.z * (s - 2 * b);
+        let local_x = b + (c.x - min.x) / diff.x * (s - 2 * b);
+        let local_z = b + (c.z - min.z) / diff.z * (s - 2 * b);
 
         // draw carrier
         ctx.beginPath();
@@ -304,8 +304,8 @@
         ctx.lineTo(s - b, s - b);
         ctx.stroke();
 
-        let local_y = b + (diff.y - c.y) / diff.y * (s - 2 * b);
-        let local_z = b + c.z / diff.z * (s - 2 * b);
+        let local_y = b + (diff.y - (c.y - min.z)) / diff.y * (s - 2 * b);
+        let local_z = b + (c.z - min.z) / diff.z * (s - 2 * b);
 
         // draw carrier
         ctx.beginPath();
