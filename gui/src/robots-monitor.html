@@ -207,8 +207,11 @@
         ctx.strokeRect(b, b, s - 2 * b, s - 2 * b);
         let local_x = b + (c.x - min.x) / diff.x * (s - 2 * b);
         let local_y = b + (c.y - min.y) / diff.y * (s - 2 * b);
+        let robot_x = local_x + r.x / diff.x * (s - 2 * b);
+        let robot_y = local_y + r.y / diff.y * (s - 2 * b);
 
         // draw carrier
+        ctx.strokeStyle = 'blue';
         ctx.beginPath();
         ctx.moveTo(b, b);
         ctx.lineTo(local_x - ps / 2, local_y - ps / 2);
@@ -220,6 +223,17 @@
         ctx.lineTo(local_x + ps / 2, local_y + ps / 2);
         ctx.stroke();
         ctx.strokeRect(local_x - ps / 2, local_y - ps / 2, ps, ps);
+
+        // draw robot
+        ctx.strokeStyle = 'red';
+        ctx.beginPath();
+        ctx.arc(local_x, local_y, ps / 8, 0, 2 * Math.PI);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(local_x, local_y);
+        ctx.lineTo(robot_x, robot_y);
+        ctx.stroke();
 
         // Draw the headline in the right top corner
         ctx.strokeStyle = 'black';
@@ -258,8 +272,12 @@
 
         let local_x = b + (c.x - min.x) / diff.x * (s - 2 * b);
         let local_z = b + (c.z - min.z) / diff.z * (s - 2 * b);
+        let robot_x = local_x + r.x / diff.x * (s - 2 * b);
+        let robot_z = local_z + r.z / diff.z * (s - 2 * b);
+
 
         // draw carrier
+        ctx.strokeStyle = 'blue';
         ctx.beginPath();
         ctx.moveTo(b, b);
         ctx.lineTo(local_x - ps / 2, local_z - ps / 20);
@@ -267,6 +285,18 @@
         ctx.lineTo(local_x + ps / 2, local_z - ps / 20);
         ctx.stroke();
         ctx.strokeRect(local_x - ps / 2, local_z - ps / 20, ps, ps / 10);
+
+
+        // draw robot
+        ctx.strokeStyle = 'red';
+        ctx.beginPath();
+        ctx.arc(local_x, local_z, ps / 8, 0, 2 * Math.PI);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(local_x, local_z);
+        ctx.lineTo(robot_x, robot_z);
+        ctx.stroke();
 
 
         // Draw the headline in the right top corner
@@ -306,8 +336,11 @@
 
         let local_y = b + (diff.y - (c.y - min.z)) / diff.y * (s - 2 * b);
         let local_z = b + (c.z - min.z) / diff.z * (s - 2 * b);
+        let robot_y = local_y + r.y / diff.y * (s - 2 * b);
+        let robot_z = local_z + r.z / diff.z * (s - 2 * b);
 
         // draw carrier
+        ctx.strokeStyle = 'blue';
         ctx.beginPath();
         ctx.moveTo(b, b);
         ctx.lineTo(local_y - ps / 2, local_z - ps / 20);
@@ -315,6 +348,18 @@
         ctx.lineTo(local_y + ps / 2, local_z - ps / 20);
         ctx.stroke();
         ctx.strokeRect(local_y - ps / 2, local_z - ps / 20, ps, ps / 10);
+
+
+        // draw robot
+        ctx.strokeStyle = 'red';
+        ctx.beginPath();
+        ctx.arc(local_y, local_z, ps / 8, 0, 2 * Math.PI);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(local_y, local_z);
+        ctx.lineTo(robot_y, robot_z);
+        ctx.stroke();
 
 
         // Draw the headline in the right top corner
