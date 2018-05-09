@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/state-display/state-display.html">
 
 <dom-module id="robots-monitor">
   <template>
@@ -6,8 +7,12 @@
       :host {
         display: block;
       }
+
+      h2{
+        text-align:center;
+      }
     </style>
-    <h2>Hello [[prop1]]!</h2>
+    <h2><state-display state="[[connected]]">rotbots monitor</state-display></h2>
   </template>
 
   <script>
@@ -19,11 +24,93 @@
       static get is() { return 'robots-monitor'; }
       static get properties() {
         return {
-          prop1: {
+          host: {
             type: String,
-            value: 'robots-monitor'
+            value: window.location.hostname,
+            observer: '_connect'
+          },
+          port: {
+            type: Number,
+            value: window.location.port,
+            observer: '_connect'
+          },
+          resource: {
+            type: String,
+            value: '',
+            observer: '_connect'
+          },
+          connected: {
+            type: String,
+            value: 'red'
+          },
+          carrier: {
+            type: Object,
+            value: {x: 0, y: 0, z: 0},
+            observer: '_draw'
+          },
+          robot: {
+            type: Object,
+            value: {x: 0, y: 0, z: 0, roll: 0, yaw: 0, pitch: 0},
+            observer: '_draw'
           }
         };
+      }
+
+      constructor() {
+        super();
+
+        // don't try to connect until the DOM is ready
+        this.domReady = false;
+        this.connection_try = null;
+      }
+
+      ready(){
+        super.ready();
+
+        this.domReady = true;
+        this._connect();
+      }
+
+      _connect(){
+        if(!this.domReady) return;
+
+        this.websocket = new WebSocket('ws://' + this.host + ':' +
+          parseInt(this.port) + '/' + this.resource)
+
+        this.websocket.onopen = function(){
+            this.connected = 'green';
+          }.bind(this);
+
+        this.websocket.onclose = function(event){
+            console.log('WebSocket Closed: ' + event.reason);
+            this.connected = 'red';
+            this._connect();
+          }.bind(this);
+
+        this.websocket.onmessage = function(event){
+            if(typeof event.data === "string"){
+              let json = JSON.parse(event.data);
+              switch(json.type){
+                case 'carrier':
+                  this.carrier = {x: json.x, y: json.y, z: json.z};
+                break;
+                case 'robot':
+                  this.robot = {
+                      x: json.x, y: json.y, z: json.z,
+                      roll: json.roll, yaw: json.yaw, pitch: json.pitch
+                    };
+                break;
+                default:
+                  console.log("unknown json message type " + json.type);
+              }
+            }else{
+              console.log("message type is not string");
+            }
+          }.bind(this);
+      }
+
+      _draw(){
+        console.log(this.carrier, this.robot);
       }
     }
 
