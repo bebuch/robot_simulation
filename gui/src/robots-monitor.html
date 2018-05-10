@@ -199,16 +199,16 @@
         let r = this.robot;
 
         // border around the cell
-        let b = 0.15 * s;
+        let b = 0.10 * s;
 
         // carrier size in the drawing
         let ps = 0.1 * s;
 
         ctx.strokeRect(b, b, s - 2 * b, s - 2 * b);
-        let local_x = b + (c.x - min.x) / diff.x * (s - 2 * b);
-        let local_y = b + (c.y - min.y) / diff.y * (s - 2 * b);
-        let robot_x = local_x + r.x / diff.x * (s - 2 * b);
-        let robot_y = local_y + r.y / diff.y * (s - 2 * b);
+        let local_x = 2 * b + (c.x - min.x) / diff.x * (s - 4 * b);
+        let local_y = 2 * b + (c.y - min.y) / diff.y * (s - 4 * b);
+        let robot_x = local_x + r.x / diff.x * (s - 4 * b);
+        let robot_y = local_y + r.y / diff.y * (s - 4 * b);
 
         // draw carrier
         ctx.strokeStyle = 'blue';
@@ -235,6 +235,18 @@
         ctx.lineTo(robot_x, robot_y);
         ctx.stroke();
 
+        ctx.beginPath();
+        ctx.strokeStyle = 'green';
+        ctx.moveTo(
+          robot_x - ps / 4 * Math.cos(r.yaw - Math.PI / 6),
+          robot_y - ps / 4 * Math.sin(r.yaw - Math.PI / 6));
+        ctx.lineTo(robot_x, robot_y);
+        ctx.lineTo(
+          robot_x - ps / 4 * Math.cos(r.yaw + Math.PI / 6),
+          robot_y - ps / 4 * Math.sin(r.yaw + Math.PI / 6));
+        ctx.stroke();
+
+
         // Draw the headline in the right top corner
         ctx.strokeStyle = 'black';
         ctx.font = s / 40 * 3 + "px Sans Serif";
@@ -258,7 +270,7 @@
         let r = this.robot;
 
         // border around the cell
-        let b = 0.15 * s;
+        let b = 0.10 * s;
 
         // carrier size in the drawing
         let ps = 0.1 * s;
@@ -270,10 +282,10 @@
         ctx.lineTo(s - b, s - b);
         ctx.stroke();
 
-        let local_x = b + (c.x - min.x) / diff.x * (s - 2 * b);
-        let local_z = b + (c.z - min.z) / diff.z * (s - 2 * b);
-        let robot_x = local_x + r.x / diff.x * (s - 2 * b);
-        let robot_z = local_z + r.z / diff.z * (s - 2 * b);
+        let local_x = 2 * b + (c.x - min.x) / diff.x * (s - 4 * b);
+        let local_z = 2 * b + (c.z - min.z) / diff.z * (s - 4 * b);
+        let robot_x = local_x + r.x / diff.x * (s - 4 * b);
+        let robot_z = local_z + r.z / diff.z * (s - 4 * b);
 
 
         // draw carrier
@@ -296,6 +308,17 @@
         ctx.beginPath();
         ctx.moveTo(local_x, local_z);
         ctx.lineTo(robot_x, robot_z);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.strokeStyle = 'green';
+        ctx.moveTo(
+          robot_x - ps / 4 * Math.cos(r.pitch - Math.PI / 6),
+          robot_z - ps / 4 * Math.sin(r.pitch - Math.PI / 6));
+        ctx.lineTo(robot_x, robot_z);
+        ctx.lineTo(
+          robot_x - ps / 4 * Math.cos(r.pitch + Math.PI / 6),
+          robot_z - ps / 4 * Math.sin(r.pitch + Math.PI / 6));
         ctx.stroke();
 
 
@@ -322,7 +345,7 @@
         let r = this.robot;
 
         // border around the cell
-        let b = 0.15 * s;
+        let b = 0.10 * s;
 
         // carrier size in the drawing
         let ps = 0.1 * s;
@@ -334,10 +357,10 @@
         ctx.lineTo(s - b, s - b);
         ctx.stroke();
 
-        let local_y = b + (diff.y - (c.y - min.z)) / diff.y * (s - 2 * b);
-        let local_z = b + (c.z - min.z) / diff.z * (s - 2 * b);
-        let robot_y = local_y + r.y / diff.y * (s - 2 * b);
-        let robot_z = local_z + r.z / diff.z * (s - 2 * b);
+        let local_y = 2 * b + (diff.y - (c.y - min.z)) / diff.y * (s - 4 * b);
+        let local_z = 2 * b + (c.z - min.z) / diff.z * (s - 4 * b);
+        let robot_y = local_y + -r.y / diff.y * (s - 4 * b);
+        let robot_z = local_z + r.z / diff.z * (s - 4 * b);
 
         // draw carrier
         ctx.strokeStyle = 'blue';
@@ -359,6 +382,17 @@
         ctx.beginPath();
         ctx.moveTo(local_y, local_z);
         ctx.lineTo(robot_y, robot_z);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.strokeStyle = 'green';
+        ctx.moveTo(
+          robot_y - ps / 4 * Math.cos(r.roll - Math.PI / 6),
+          robot_z - ps / 4 * Math.sin(r.roll - Math.PI / 6));
+        ctx.lineTo(robot_y, robot_z);
+        ctx.lineTo(
+          robot_y - ps / 4 * Math.cos(r.roll + Math.PI / 6),
+          robot_z - ps / 4 * Math.sin(r.roll + Math.PI / 6));
         ctx.stroke();
 
 
