@@ -1,6 +1,6 @@
 {
-  "name": "Robots Monitor",
-  "short_name": "Robots Monitor",
+  "name": "robots-gui",
+  "short_name": "robots-gui",
   "description": "frontend of bebuch/robots_simulation",
   "start_url": "/",
   "display": "standalone"

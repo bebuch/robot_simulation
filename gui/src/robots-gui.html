@@ -1,9 +1,9 @@
-<link rel="import" href="/bower_components/polymer/polymer-element.html">
-<link rel="import" href="/bower_components/state-display/state-display.html">
-<link rel="import" href="/bower_components/paper-toggle-button/paper-toggle-button.html">
-<link rel="import" href="/src/robots-monitor.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/state-display/state-display.html">
+<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../bower_components/robots-monitor/robots-monitor.html">
 
-<dom-module id="extended-element">
+<dom-module id="robots-gui">
   <template>
     <style>
       h2{
@@ -23,8 +23,8 @@
      * @customElement
      * @polymer
      */
-    class ExtendedElement extends Polymer.Element {
-      static get is() { return 'extended-element'; }
+    class RobotsGui extends Polymer.Element {
+      static get is() { return 'robots-gui'; }
       static get properties() {
         return {
           connected: String,
@@ -34,6 +34,6 @@
       }
     }
 
-    window.customElements.define(ExtendedElement.is, ExtendedElement);
+    window.customElements.define(RobotsGui.is, RobotsGui);
   </script>
 <dom-module>

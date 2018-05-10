@@ -1,15 +1,16 @@
 {
-  "name": "Robots Monitor",
+  "name": "robots-gui",
   "description": "frontend of bebuch/robots_simulation",
   "main": "index.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^2.0.0"
+    "polymer": "Polymer/polymer#^2.0.0",
+    "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#^2.1.0",
+    "state-display": "bebuch/state-display",
+    "paper-toggle-button": "bebuch/paper-toggle-button#master",
+    "robots-monitor": "bebuch/robots-monitor"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
-    "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#^2.1.0",
-    "state-display": "bebuch/state-display",
-    "paper-toggle-button": "bebuch/paper-toggle-button"
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
   }
 }
