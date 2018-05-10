@@ -11,11 +11,12 @@
       }
     </style>
     <h2>
-      <state-display style="display:inline-block;" state="[[connected]]">rotbots monitor</state-display>
-      <span style="display:inline-block;width:1em;"></span>
+      <state-display style="display:inline-block;" state="[[connected]]"></state-display>
+      <span style="white-space:nowrap;margin:0 0.5em;">rotbots monitor</span>
+      <paper-toggle-button style="display:inline-block;" checked="{{vertical}}">vertical</paper-toggle-button>
       <paper-toggle-button style="display:inline-block;" checked="{{cube}}">cube</paper-toggle-button>
     </h2>
-    <robots-monitor id="ws_control" port="8090" connected="{{connected}}" cube$="[[cube]]"></robots-monitor>
+    <robots-monitor id="ws_control" port="8090" connected="{{connected}}" cube$="[[cube]]" vertical$="[[vertical]]"></robots-monitor>
   </template>
   <script>
     /**
@@ -27,7 +28,8 @@
       static get properties() {
         return {
           connected: String,
-          cube: Boolean
+          cube: Boolean,
+          vertical: Boolean
         };
       }
     }
