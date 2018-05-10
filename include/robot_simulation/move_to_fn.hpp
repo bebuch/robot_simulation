@@ -41,6 +41,23 @@ namespace robot_simulation{
 				auto const acceleration_ = robot.acceleration_;
 				auto const max_speed_ = robot.max_speed_;
 
+				auto const variation_current_ = [&robot]{
+						if constexpr(!std::is_same_v< Pos, position >){
+							return robot.variation_current_;
+						}else{
+							(void)robot; // Silance GCC
+							return 0.0;
+						}
+					}();
+				auto const variation_voltage_ = [&robot]{
+						if constexpr(!std::is_same_v< Pos, position >){
+							return robot.variation_voltage_;
+						}else{
+							(void)robot; // Silance GCC
+							return 0.0;
+						}
+					}();
+
 				auto const source_pos = pos;
 				auto const target_pos = [&pos, &target_to]{
 					if constexpr(std::is_same_v< Pos, robot_weld_target >){
@@ -77,10 +94,14 @@ namespace robot_simulation{
 
 				std::random_device rd;
 				std::mt19937 gen(rd());
-				std::uniform_real_distribution<> current_dis_on(-2, 2);
-				std::uniform_real_distribution<> voltage_dis_on(-0.5, 0.5);
-				std::uniform_real_distribution<> current_dis_off(0, 0.10);
-				std::uniform_real_distribution<> voltage_dis_off(0, 0.02);
+				std::uniform_real_distribution<>
+					current_dis_on(-variation_current_, variation_current_);
+				std::uniform_real_distribution<>
+					voltage_dis_on(-variation_voltage_, variation_voltage_);
+				std::uniform_real_distribution<>
+					current_dis_off(0, variation_current_ / 10);
+				std::uniform_real_distribution<>
+					voltage_dis_off(0, variation_voltage_ / 10);
 				auto const weld_distance =
 					robot_simulation::distance(pos, target_to);
 

@@ -21,7 +21,7 @@ namespace robot_simulation{
 		ws_client_service(ws_server_service& gui)
 			: gui_(gui)
 			, platform_(gui, 0.4, 2, {0.8, 0.3, 0.5}, {15, 17, 14})
-			, robot_(gui, 0.1, 1, 100, 20, {-2, -2, 0}, {2, 2, 4})
+			, robot_(gui, 0.1, 1, 100, 20, 2, 0.5, {-2, -2, 0}, {2, 2, 4})
 		{
 			set_init();
 		}
@@ -51,6 +51,8 @@ namespace robot_simulation{
 							{"z", robot_.max_.z}})}})},
 					{"current_max", robot_.max_current_},
 					{"voltage_max", robot_.max_voltage_},
+					{"current_variation", robot_.variation_current_},
+					{"voltage_variation", robot_.variation_voltage_},
 					{"carrier", nlohmann::json::object({
 							{"x", platform_pos.x},
 							{"y", platform_pos.y},

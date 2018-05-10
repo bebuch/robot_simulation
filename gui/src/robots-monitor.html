@@ -31,6 +31,10 @@
   </template>
 
   <script>
+    function clamp(value, min, max){
+      return Math.min(Math.max(value, min), max);
+    };
+
     /**
      * @customElement
      * @polymer
@@ -65,6 +69,14 @@
           maxVoltage: {
             type: Number,
             value: 20
+          },
+          variationCurrent: {
+            type: Number,
+            value: 2
+          },
+          variationVoltage: {
+            type: Number,
+            value: 0.5
           },
           carrierBountingBox: {
             type: Object,
@@ -166,6 +178,8 @@
                   this.robotBountingBox = json.robot_minmax;
                   this.maxCurrent = json.current_max;
                   this.maxVoltage = json.voltage_max;
+                  this.variationCurrent = json.current_variation;
+                  this.variationVoltage = json.voltage_variation;
                   this.carrier = json.carrier;
                   this.robot = json.robot;
 
@@ -247,8 +261,27 @@
         ctx.stroke();
 
 
+        // draw weld light
+        let intensity = 1 - clamp(
+              (r.current - this.maxCurrent + this.variationCurrent)
+                / (2 * this.variationCurrent) *
+              (r.voltage - this.maxVoltage + this.variationVoltage)
+                / (2 * this.variationVoltage),
+              0, 1
+            );
+        let grd = ctx.createRadialGradient(
+          robot_x, robot_y, 0, robot_x, robot_y, ps / 2);
+        grd.addColorStop(0.0, "rgba(255, 255, 0, " + intensity + ")");
+        grd.addColorStop(1.0, "rgba(255, 255, 0, 0)");
+        ctx.fillStyle = grd;
+        ctx.beginPath();
+        ctx.arc(robot_x, robot_y, ps / 2, 0, 2 * Math.PI);
+        ctx.fill();
+
+
         // Draw the headline in the right top corner
         ctx.strokeStyle = 'black';
+        ctx.fillStyle = 'black';
         ctx.font = s / 40 * 3 + "px Sans Serif";
         ctx.lineWidth = s / 800 * 3;
         let y_pos = s / 40 * 3 + s / 2000 * 3;
@@ -322,8 +355,27 @@
         ctx.stroke();
 
 
+        // draw weld light
+        let intensity = 1 - clamp(
+              (r.current - this.maxCurrent + this.variationCurrent)
+                / (2 * this.variationCurrent) *
+              (r.voltage - this.maxVoltage + this.variationVoltage)
+                / (2 * this.variationVoltage),
+              0, 1
+            );
+        let grd = ctx.createRadialGradient(
+          robot_x, robot_z, 0, robot_x, robot_z, ps / 2);
+        grd.addColorStop(0.0, "rgba(255, 255, 0, " + intensity + ")");
+        grd.addColorStop(1.0, "rgba(255, 255, 0, 0)");
+        ctx.fillStyle = grd;
+        ctx.beginPath();
+        ctx.arc(robot_x, robot_z, ps / 2, 0, 2 * Math.PI);
+        ctx.fill();
+
+
         // Draw the headline in the right top corner
         ctx.strokeStyle = 'black';
+        ctx.fillStyle = 'black';
         ctx.font = s / 40 * 3 + "px Sans Serif";
         ctx.lineWidth = s / 800 * 3;
         let y_pos = s / 40 * 3 + s / 2000 * 3;
@@ -396,8 +448,27 @@
         ctx.stroke();
 
 
+        // draw weld light
+        let intensity = 1 - clamp(
+              (r.current - this.maxCurrent + this.variationCurrent)
+                / (2 * this.variationCurrent) *
+              (r.voltage - this.maxVoltage + this.variationVoltage)
+                / (2 * this.variationVoltage),
+              0, 1
+            );
+        let grd = ctx.createRadialGradient(
+          robot_y, robot_z, 0, robot_y, robot_z, ps / 2);
+        grd.addColorStop(0.0, "rgba(255, 255, 0, " + intensity + ")");
+        grd.addColorStop(1.0, "rgba(255, 255, 0, 0)");
+        ctx.fillStyle = grd;
+        ctx.beginPath();
+        ctx.arc(robot_y, robot_z, ps / 2, 0, 2 * Math.PI);
+        ctx.fill();
+
+
         // Draw the headline in the right top corner
         ctx.strokeStyle = 'black';
+        ctx.fillStyle = 'black';
         ctx.font = s / 40 * 3 + "px Sans Serif";
         ctx.lineWidth = s / 800 * 3;
         let y_pos = s / 40 * 3 + s / 2000 * 3;

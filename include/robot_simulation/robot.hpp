@@ -27,6 +27,8 @@ namespace robot_simulation{
 			double max_speed,
 			double max_current,
 			double max_voltage,
+			double variation_current,
+			double variation_voltage,
 			position min,
 			position max);
 
@@ -39,13 +41,15 @@ namespace robot_simulation{
 		std::list< weld_params > get_weld_params();
 
 
-		double acceleration_;
-		double max_speed_;
-		double max_current_;
-		double max_voltage_;
+		double const acceleration_;
+		double const max_speed_;
+		double const max_current_;
+		double const max_voltage_;
+		double const variation_current_;
+		double const variation_voltage_;
 
-		position min_;
-		position max_;
+		position const min_;
+		position const max_;
 
 
 	private:

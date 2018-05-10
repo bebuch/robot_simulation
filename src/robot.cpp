@@ -20,6 +20,8 @@ namespace robot_simulation{
 		double max_speed,
 		double max_current,
 		double max_voltage,
+		double variation_current,
+		double variation_voltage,
 		position min,
 		position max
 	)
@@ -27,6 +29,8 @@ namespace robot_simulation{
 		, max_speed_(max_speed)
 		, max_current_(max_current)
 		, max_voltage_(max_voltage)
+		, variation_current_(variation_current)
+		, variation_voltage_(variation_voltage)
 		, min_(min)
 		, max_(max)
 		, gui_(gui)
