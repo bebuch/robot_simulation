@@ -1,0 +1,37 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/state-display/state-display.html">
+<link rel="import" href="/bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="/src/robots-monitor.html">
+
+<dom-module id="extended-element">
+  <template>
+    <style>
+      h2{
+        text-align:center;
+      }
+    </style>
+    <h2>
+      <state-display style="display:inline-block;" state="[[connected]]">rotbots monitor</state-display>
+      <span style="display:inline-block;width:1em;"></span>
+      <paper-toggle-button style="display:inline-block;" checked="{{cube}}">cube</paper-toggle-button>
+    </h2>
+    <robots-monitor id="ws_control" port="8090" connected="{{connected}}" cube$="[[cube]]"></robots-monitor>
+  </template>
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class ExtendedElement extends Polymer.Element {
+      static get is() { return 'extended-element'; }
+      static get properties() {
+        return {
+          connected: String,
+          cube: Boolean
+        };
+      }
+    }
+
+    window.customElements.define(ExtendedElement.is, ExtendedElement);
+  </script>
+<dom-module>

@@ -1,16 +1,11 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/state-display/state-display.html">
-<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
 
 <dom-module id="robots-monitor">
   <template strip-whitespace>
     <style>
       :host {
         display:block;
-      }
-
-      h2{
-        text-align:center;
       }
 
       #cv{
@@ -48,11 +43,7 @@
       }
     </style>
 
-    <h2>
-      <state-display style="display:inline-block;" state="[[connected]]">rotbots monitor</state-display>
-      <span style="display:inline-block;width:1em;"></span>
-      <paper-toggle-button style="display:inline-block;" checked="{{cube}}">cube</paper-toggle-button>
-    </h2>
+
     <canvas id="cv"></canvas>
     <div class="space3d">
       <div id="box">
@@ -93,7 +84,8 @@
           },
           connected: {
             type: String,
-            value: 'red'
+            value: 'red',
+            notify: true
           },
           maxCurrent: {
             type: Number,
