@@ -139,9 +139,9 @@ namespace robot_simulation{
 
 	inline std::ostream& operator<<(std::ostream& os, orientation const& o){
 		return os << std::fixed << std::setprecision(3)
-			<< "{" << std::setw(6) << o.roll << " rad
+			<< "{" << std::setw(6) << o.roll << " rad"
 			<< ", " << std::setw(6) << o.pitch << " rad"
-			<< ", " << std::setw(6) << o.yaw << " rad"}";
+			<< ", " << std::setw(6) << o.yaw << " rad}";
 	}
 
 
