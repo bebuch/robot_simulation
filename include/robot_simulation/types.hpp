@@ -99,9 +99,9 @@ namespace robot_simulation{
 
 	struct orientation{
 		// angles in radiant
-		double yaw;
-		double pitch;
 		double roll;
+		double pitch;
+		double yaw;
 	};
 
 	constexpr orientation operator-(
@@ -109,9 +109,9 @@ namespace robot_simulation{
 		orientation const& p2
 	){
 		return {
-				p1.yaw - p2.yaw,
+				p1.roll - p2.roll,
 				p1.pitch - p2.pitch,
-				p1.roll - p2.roll
+				p1.yaw - p2.yaw
 			};
 	}
 
@@ -120,9 +120,9 @@ namespace robot_simulation{
 		orientation const& p2
 	){
 		return {
-				p1.yaw + p2.yaw,
+				p1.roll + p2.roll,
 				p1.pitch + p2.pitch,
-				p1.roll + p2.roll
+				p1.yaw + p2.yaw
 			};
 	}
 
@@ -131,17 +131,17 @@ namespace robot_simulation{
 		double factor
 	){
 		return {
-				p1.yaw * factor,
+				p1.roll * factor,
 				p1.pitch * factor,
-				p1.roll * factor
+				p1.yaw * factor
 			};
 	}
 
 	inline std::ostream& operator<<(std::ostream& os, orientation const& o){
 		return os << std::fixed << std::setprecision(3)
-			<< "{" << std::setw(6) << o.yaw << " rad"
+			<< "{" << std::setw(6) << o.roll << " rad
 			<< ", " << std::setw(6) << o.pitch << " rad"
-			<< ", " << std::setw(6) << o.roll << " rad}";
+			<< ", " << std::setw(6) << o.yaw << " rad"}";
 	}
 
 

@@ -63,8 +63,8 @@ namespace robot_simulation{
 							{"y", robot_pos.position.y},
 							{"z", robot_pos.position.z},
 							{"roll", robot_pos.orientation.roll},
-							{"yaw", robot_pos.orientation.yaw},
 							{"pitch", robot_pos.orientation.pitch},
+							{"yaw", robot_pos.orientation.yaw},
 							{"current", 0},
 							{"voltage", 0}
 						})}
