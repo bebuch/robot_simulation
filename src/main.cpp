@@ -36,7 +36,7 @@ int main(){
 		std::uint8_t const thread_count = 10;
 
 		std::string server_root = "gui";
-		auto server_address = boost::asio::ip::make_address("127.0.0.1");
+		auto server_address = boost::asio::ip::make_address("0::0");
 		std::uint16_t server_port = 8090;
 
 		std::string const client_host = "127.0.0.1";
